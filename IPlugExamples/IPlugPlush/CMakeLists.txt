@@ -1,0 +1,9 @@
+iplug_add_plugin(
+	IPlugPlush
+	SOURCES
+	I3DControl.h
+	IPlugPlush.cpp
+	IPlugPlush.h
+	IPlugPlush.rc
+	resource.h
+)

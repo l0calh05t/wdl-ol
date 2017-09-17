@@ -1,0 +1,9 @@
+iplug_add_plugin(
+	IPlugConvoEngine
+	SOURCES
+	IPlugConvoEngine.cpp
+	IPlugConvoEngine.h
+	IPlugConvoEngine.rc
+	ir.h
+	resource.h
+)

@@ -1,0 +1,9 @@
+iplug_add_plugin(
+	IPlugChunks
+	SOURCES
+	IPlugChunks_controls.h
+	IPlugChunks.cpp
+	IPlugChunks.h
+	IPlugChunks.rc
+	resource.h
+)

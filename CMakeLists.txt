@@ -1,0 +1,14 @@
+cmake_minimum_required(VERSION 3.9 FATAL_ERROR)
+set(CMAKE_BUILD_TYPE_INIT Debug)
+project(WDL-OL)
+
+if(DEFINED CMAKE_BUILD_TYPE)
+	set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS Debug Release MinSizeRel RelWithDebInfo)
+endif()
+
+add_subdirectory(WDL)
+
+option(IPLUG_BUILD_EXAMPLES "Build IPlug example plugins" ON)
+if(IPLUG_BUILD_EXAMPLES)
+	add_subdirectory(IPlugExamples)
+endif()

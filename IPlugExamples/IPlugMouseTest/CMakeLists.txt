@@ -1,0 +1,10 @@
+iplug_add_plugin(
+	IPlugMouseTest
+	SOURCES
+	IPlugMouseTest.cpp
+	IPlugMouseTest.h
+	IPlugMouseTest.rc
+	IPlugMouseTestControls.h
+	IPlugMouseTestDSP.h
+	resource.h
+)

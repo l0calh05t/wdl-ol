@@ -1,0 +1,9 @@
+iplug_add_plugin(
+	IPlugPolySynth
+	SOURCES
+	IPlugPolySynth.cpp
+	IPlugPolySynth.h
+	IPlugPolySynth.rc
+	IPlugPolySynthDSP.h
+	resource.h
+)
