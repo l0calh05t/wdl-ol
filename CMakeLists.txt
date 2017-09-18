@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 3.9 FATAL_ERROR)
 set(CMAKE_BUILD_TYPE_INIT Debug)
+set(CMAKE_USER_MAKE_RULES_OVERRIDE IPlugDefaultFlags.cmake)
 project(WDL-OL)
 
 if(DEFINED CMAKE_BUILD_TYPE)
