@@ -112,6 +112,7 @@ function(iplug_add_plugin PLUGIN_NAME)
 		set_target_properties(${PLUGIN_NAME}-vst PROPERTIES
 			OUTPUT_NAME ${PLUGIN_NAME}
 		)
+		install(TARGETS ${PLUGIN_NAME}-vst DESTINATION .)
 	endif()
 	if(TARGET IPlugVST3)
 		add_library(${PLUGIN_NAME}-vst3 MODULE ${PLUGIN_SOURCES})
@@ -120,5 +121,6 @@ function(iplug_add_plugin PLUGIN_NAME)
 			OUTPUT_NAME ${PLUGIN_NAME}
 			SUFFIX .vst3
 		)
+		install(TARGETS ${PLUGIN_NAME}-vst3 DESTINATION .)
 	endif()
 endfunction()
