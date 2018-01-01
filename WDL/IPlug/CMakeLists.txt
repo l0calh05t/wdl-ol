@@ -85,28 +85,28 @@ if(IPLUG_VST)
 	target_compile_definitions(IPlugVST INTERFACE VST_API)
 endif()
 
-# if(IPLUG_VST3)
-# 	set(VST_SDK TRUE)
-# 	set(SDK_ROOT ../../VST3_SDK)
-# 	add_subdirectory(../../VST3_SDK/base VST3_SDK/base)
-# 	target_include_directories(base PUBLIC ../../VST3_SDK)
-# 	add_subdirectory(../../VST3_SDK/public.sdk VST3_SDK/public.sdk)
-# 	target_include_directories(sdk PUBLIC ../../VST3_SDK)
+if(IPLUG_VST3)
+	set(VST_SDK TRUE)
+	set(SDK_ROOT ../../VST3_SDK)
+	add_subdirectory(../../VST3_SDK/base VST3_SDK/base)
+	target_include_directories(base PUBLIC ../../VST3_SDK)
+	add_subdirectory(../../VST3_SDK/public.sdk VST3_SDK/public.sdk)
+	target_include_directories(sdk PUBLIC ../../VST3_SDK)
 
-# 	add_library(
-# 		IPlugVST3
-# 		STATIC
-# 		IPlugVST3.cpp IPlugVST3.h
-# 		../../VST3_SDK/public.sdk/source/main/dllmain.cpp
-# 		../../VST3_SDK/public.sdk/source/vst/vstsinglecomponenteffect.cpp
-# 		${IPLUG_API_COMMON}
-# 	)
-# 	target_link_libraries(IPlugVST3 PUBLIC IPlug sdk)
-# 	target_compile_definitions(IPlugVST3 INTERFACE VST3_API)
-# 	if(MSVC)
-# 		target_sources(IPlugVST3 INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/IPlugVST3.def)
-# 	endif()
-# endif()
+	add_library(
+		IPlugVST3
+		STATIC
+		IPlugVST3.cpp IPlugVST3.h
+		../../VST3_SDK/public.sdk/source/main/dllmain.cpp
+		../../VST3_SDK/public.sdk/source/vst/vstsinglecomponenteffect.cpp
+		${IPLUG_API_COMMON}
+	)
+	target_link_libraries(IPlugVST3 PUBLIC IPlug sdk)
+	target_compile_definitions(IPlugVST3 INTERFACE VST3_API)
+	if(MSVC)
+		target_sources(IPlugVST3 INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/IPlugVST3.def)
+	endif()
+endif()
 
 include(CMakeParseArguments)
 function(iplug_add_plugin PLUGIN_NAME)

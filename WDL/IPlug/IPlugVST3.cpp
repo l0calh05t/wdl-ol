@@ -263,7 +263,7 @@ tresult PLUGIN_API IPlugVST3::terminate ()
 {
   TRACE;
 
-  viewsArray.removeAll();
+  viewsArray.clear();
   return SingleComponentEffect::terminate();
 }
 
@@ -284,46 +284,7 @@ tresult PLUGIN_API IPlugVST3::setBusArrangements(SpeakerArrangement* inputs, int
     return kResultFalse;
   }
 
-  // handle input
-  AudioBus* bus = FCast<AudioBus>(audioInputs.at(0));
-
-  // if existing input bus has a different number of channels to the input bus being connected
-  if (bus && SpeakerArr::getChannelCount(bus->getArrangement()) != reqNumInputChannels)
-  {
-    audioInputs.remove(bus);
-    addAudioInput(USTRING("Input"), getSpeakerArrForChans(reqNumInputChannels));
-  }
-
-  // handle output
-  bus = FCast<AudioBus>(audioOutputs.at(0));
-  // if existing output bus has a different number of channels to the output bus being connected
-  if (bus && SpeakerArr::getChannelCount(bus->getArrangement()) != reqNumOutputChannels)
-  {
-    audioOutputs.remove(bus);
-    addAudioOutput(USTRING("Output"), getSpeakerArrForChans(reqNumOutputChannels));
-  }
-
-  if (!mScChans && numIns == 1) // No sidechain, every thing OK
-  {
-    return kResultTrue;
-  }
-
-  if (mScChans && numIns == 2) // numIns = num Input BUSes
-  {
-    int32 reqNumSideChainChannels = SpeakerArr::getChannelCount(inputs[1]);  //requested # sidechain input channels
-
-    bus = FCast<AudioBus>(audioInputs.at(1));
-
-    if (bus && SpeakerArr::getChannelCount(bus->getArrangement()) != reqNumSideChainChannels)
-    {
-      audioInputs.remove(bus);
-      addAudioInput(USTRING("Sidechain Input"), getSpeakerArrForChans(reqNumSideChainChannels), kAux, 0); // either mono or stereo
-    }
-
-    return kResultTrue;
-  }
-
-  return kResultFalse;
+  return SingleComponentEffect::setBusArrangements(inputs, numIns, outputs, numOuts);
 }
 
 tresult PLUGIN_API IPlugVST3::setActive(TBool state)
@@ -779,19 +740,12 @@ tresult PLUGIN_API IPlugVST3::getParamValueByString (ParamID tag, TChar* string,
 
 void IPlugVST3::addDependentView(IPlugVST3View* view)
 {
-  viewsArray.add(view);
+  viewsArray.push_back(view);
 }
 
 void IPlugVST3::removeDependentView(IPlugVST3View* view)
 {
-  for (int32 i = 0; i < viewsArray.total(); i++)
-  {
-    if (viewsArray.at(i) == view)
-    {
-      viewsArray.removeAt(i);
-      break;
-    }
-  }
+  viewsArray.erase(std::find(viewsArray.begin(), viewsArray.end(), view));
 }
 
 tresult IPlugVST3::beginEdit(ParamID tag)

@@ -135,7 +135,7 @@ private:
   bool mSidechainActive;
 //  IMidiQueue mMidiOutputQueue;
   Steinberg::Vst::ProcessContext mProcessContext;
-  Steinberg::TArray <IPlugVST3View*> viewsArray;
+  std::vector<IPlugVST3View*> viewsArray;
 
   friend class IPlugVST3View;
 };
