@@ -120,7 +120,6 @@ function(iplug_add_plugin PLUGIN_NAME)
 		set_target_properties(${PLUGIN_NAME}-vst PROPERTIES
 			LIBRARY_OUTPUT_NAME ${PLUGIN_NAME}
 			PDB_NAME ${PLUGIN_NAME}-vst
-			OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/VST
 		)
 		install(TARGETS ${PLUGIN_NAME}-vst DESTINATION .)
 	endif()
@@ -131,7 +130,6 @@ function(iplug_add_plugin PLUGIN_NAME)
 			LIBRARY_OUTPUT_NAME ${PLUGIN_NAME}
 			PDB_NAME ${PLUGIN_NAME}-vst3
 			SUFFIX .vst3
-			OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/VST3
 		)
 		install(TARGETS ${PLUGIN_NAME}-vst3 DESTINATION .)
 	endif()
