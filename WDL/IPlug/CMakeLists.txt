@@ -86,15 +86,23 @@ if(IPLUG_VST)
 endif()
 
 # if(IPLUG_VST3)
+# 	set(VST_SDK TRUE)
+# 	set(SDK_ROOT ../../VST3_SDK)
+# 	add_subdirectory(../../VST3_SDK/base VST3_SDK/base)
+# 	target_include_directories(base PUBLIC ../../VST3_SDK)
+# 	add_subdirectory(../../VST3_SDK/public.sdk VST3_SDK/public.sdk)
+# 	target_include_directories(sdk PUBLIC ../../VST3_SDK)
+
 # 	add_library(
 # 		IPlugVST3
 # 		STATIC
 # 		IPlugVST3.cpp IPlugVST3.h
+# 		../../VST3_SDK/public.sdk/source/main/dllmain.cpp
+# 		../../VST3_SDK/public.sdk/source/vst/vstsinglecomponenteffect.cpp
 # 		${IPLUG_API_COMMON}
 # 	)
-# 	target_link_libraries(IPlugVST3 PUBLIC IPlug)
+# 	target_link_libraries(IPlugVST3 PUBLIC IPlug sdk)
 # 	target_compile_definitions(IPlugVST3 INTERFACE VST3_API)
-# 	target_include_directories(IPlugVST3 PUBLIC ../../VST3_SDK)
 # 	if(MSVC)
 # 		target_sources(IPlugVST3 INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/IPlugVST3.def)
 # 	endif()
@@ -110,7 +118,9 @@ function(iplug_add_plugin PLUGIN_NAME)
 		add_library(${PLUGIN_NAME}-vst MODULE ${PLUGIN_SOURCES})
 		target_link_libraries(${PLUGIN_NAME}-vst PRIVATE IPlugVST ${PLUGIN_LIBRARIES})
 		set_target_properties(${PLUGIN_NAME}-vst PROPERTIES
-			OUTPUT_NAME ${PLUGIN_NAME}
+			LIBRARY_OUTPUT_NAME ${PLUGIN_NAME}
+			PDB_NAME ${PLUGIN_NAME}-vst
+			OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/VST
 		)
 		install(TARGETS ${PLUGIN_NAME}-vst DESTINATION .)
 	endif()
@@ -118,8 +128,10 @@ function(iplug_add_plugin PLUGIN_NAME)
 		add_library(${PLUGIN_NAME}-vst3 MODULE ${PLUGIN_SOURCES})
 		target_link_libraries(${PLUGIN_NAME}-vst3 PRIVATE IPlugVST3 ${PLUGIN_LIBRARIES})
 		set_target_properties(${PLUGIN_NAME}-vst3 PROPERTIES
-			OUTPUT_NAME ${PLUGIN_NAME}
+			LIBRARY_OUTPUT_NAME ${PLUGIN_NAME}
+			PDB_NAME ${PLUGIN_NAME}-vst3
 			SUFFIX .vst3
+			OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/VST3
 		)
 		install(TARGETS ${PLUGIN_NAME}-vst3 DESTINATION .)
 	endif()
