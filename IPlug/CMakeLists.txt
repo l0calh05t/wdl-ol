@@ -1,15 +1,28 @@
 set(IPLUG_SOURCES_COMMON
 	IGraphics/IAutoGUI.h
-	IGraphics/IKeyboardControl.h
-	IGraphics/IPopupMenu.h
-	IGraphics/IGraphics.cpp IGraphics/IGraphics.h
 	IGraphics/IControl.cpp IGraphics/IControl.h
 	IGraphics/IControls.cpp IGraphics/IControls.h
+	IGraphics/IGraphics.cpp IGraphics/IGraphics.h
+	IGraphics/IGraphicsConstants.h
+	IGraphics/IGraphicsLice.cpp IGraphics/IGraphicsLice.h
+	IGraphics/IGraphicsLiveEdit.h
+	IGraphics/IGraphicsStructs.h
+	IGraphics/IGraphicsUtilites.h
+	IGraphics/IKeyboardControl.h
+	IGraphics/IPopupMenu.h
+	IGraphics/NanoSVG/nanosvg.h
 	IPlug_include_in_plug_hdr.h
 	IPlug_include_in_plug_src.h
 	IPlugBase.cpp IPlugBase.h
+	IPlugBase_select.h
 	IPlugBaseGraphics.cpp IPlugBaseGraphics.h
+	IPlugConstants.h
+	IPlugLogger.h
+	IPlugMidi.h
 	IPlugParameter.cpp IPlugParameter.h
+	IPlugPlatform.h
+	IPlugStructs.h
+	IPlugUtilities.h
 	NChanDelay.h
 )
 
