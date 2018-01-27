@@ -2,8 +2,6 @@ add_library(
 	IPlug
 	STATIC
 	IGraphics/IAutoGUI.h
-	IGraphics/IControl.cpp IGraphics/IControl.h
-	IGraphics/IControls.cpp IGraphics/IControls.h
 	IGraphics/IKeyboardControl.h
 	IGraphics/IPopupMenu.h
 	IPlug_include_in_plug_hdr.h
@@ -19,6 +17,8 @@ target_link_libraries(IPlug PUBLIC lice WDL)
 set(
 	IPLUG_API_COMMON
 	IGraphics/IGraphics.cpp IGraphics/IGraphics.h
+	IGraphics/IControl.cpp IGraphics/IControl.h
+	IGraphics/IControls.cpp IGraphics/IControls.h
 )
 if(WIN32)
 	target_link_libraries(IPlug PRIVATE wininet comctl32)
@@ -76,7 +76,7 @@ if(IPLUG_VST)
 		${IPLUG_API_COMMON}
 	)
 	target_link_libraries(IPlugVST PUBLIC IPlug)
-	target_compile_definitions(IPlugVST INTERFACE VST_API)
+	target_compile_definitions(IPlugVST PUBLIC VST_API)
 	target_include_directories(IPlugVST PUBLIC ../VST_SDK)
 endif()
 
@@ -97,7 +97,10 @@ if(IPLUG_VST3)
 		${IPLUG_API_COMMON}
 	)
 	target_link_libraries(IPlugVST3 PUBLIC IPlug sdk)
-	target_compile_definitions(IPlugVST3 INTERFACE VST3_API)
+	target_compile_definitions(IPlugVST3 PUBLIC VST3_API)
+	if(MSVC)
+		target_sources(IPlugVST3 INTERFACE ${SDK_ROOT}/public.sdk/source/main/winexport.def)
+	endif()
 endif()
 
 include(CMakeParseArguments)
