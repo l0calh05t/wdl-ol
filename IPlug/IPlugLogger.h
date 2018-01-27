@@ -93,8 +93,8 @@
     *p++ = '\n';
     *p   = '\0';
     
-    #ifndef VST3_API //todo: unicode conflict
-    OutputDebugString(buf);
+    #ifndef VST3_API
+    OutputDebugStringA(buf);
     #endif
   }
 
