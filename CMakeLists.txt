@@ -9,12 +9,18 @@ if(MSVC)
 		-D_CRT_NONSTDC_NO_DEPRECATE
 	)
 endif()
+if(WIN32)
+	add_definitions(-DNOMINMAX)
+endif()
+
+add_definitions(-DNO_FREETYPE)
 
 if(DEFINED CMAKE_BUILD_TYPE)
 	set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS Debug Release MinSizeRel RelWithDebInfo)
 endif()
 
 add_subdirectory(WDL)
+add_subdirectory(IPlug)
 
 option(IPLUG_BUILD_EXAMPLES "Build IPlug example plugins" ON)
 if(IPLUG_BUILD_EXAMPLES)

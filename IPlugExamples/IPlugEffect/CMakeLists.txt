@@ -3,6 +3,6 @@ iplug_add_plugin(
 	SOURCES
 	IPlugEffect.cpp
 	IPlugEffect.h
-	IPlugEffect.rc
-	resource.h
+	resources/IPlugEffect.rc
+	resources/resource.h
 )

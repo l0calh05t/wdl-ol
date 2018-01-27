@@ -1,5 +1,4 @@
 add_subdirectory(giflib)
-add_subdirectory(IPlug)
 add_subdirectory(jpeglib)
 add_subdirectory(libpng)
 add_subdirectory(lice)
