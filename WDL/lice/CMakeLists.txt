@@ -29,4 +29,5 @@ add_library(
 )
 target_include_directories(lice INTERFACE .)
 target_link_libraries(lice PRIVATE giflib glew jpeglib libpng plush2 tinyxml zlib)
+set_target_properties(lice PROPERTIES FOLDER Cockos)
 add_subdirectory(glew)

@@ -10,3 +10,4 @@ add_library(
 	gifalloc.c
 )
 target_include_directories(giflib INTERFACE .)
+set_target_properties(giflib PROPERTIES FOLDER "Third Party")

@@ -25,3 +25,4 @@ add_library(
 	zutil.c zutil.h
 )
 target_include_directories(zlib INTERFACE .)
+set_target_properties(zlib PROPERTIES FOLDER "Third Party")

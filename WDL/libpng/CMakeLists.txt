@@ -24,3 +24,4 @@ add_library(
 )
 target_include_directories(libpng INTERFACE .)
 target_link_libraries(libpng PRIVATE zlib)
+set_target_properties(libpng PROPERTIES FOLDER "Third Party")

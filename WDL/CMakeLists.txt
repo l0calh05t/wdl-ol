@@ -18,3 +18,4 @@ target_include_directories(
 	INTERFACE
 	.
 )
+set_target_properties(WDL PROPERTIES FOLDER Cockos)

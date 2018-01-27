@@ -1,9 +1,10 @@
-add_library(
-	IPlug
-	STATIC
+set(IPLUG_SOURCES_COMMON
 	IGraphics/IAutoGUI.h
 	IGraphics/IKeyboardControl.h
 	IGraphics/IPopupMenu.h
+	IGraphics/IGraphics.cpp IGraphics/IGraphics.h
+	IGraphics/IControl.cpp IGraphics/IControl.h
+	IGraphics/IControls.cpp IGraphics/IControls.h
 	IPlug_include_in_plug_hdr.h
 	IPlug_include_in_plug_src.h
 	IPlugBase.cpp IPlugBase.h
@@ -11,18 +12,14 @@ add_library(
 	IPlugParameter.cpp IPlugParameter.h
 	NChanDelay.h
 )
-target_include_directories(IPlug PUBLIC . IGraphics IGraphics/NanoSVG)
-target_link_libraries(IPlug PUBLIC lice WDL)
 
-set(
-	IPLUG_API_COMMON
-	IGraphics/IGraphics.cpp IGraphics/IGraphics.h
-	IGraphics/IControl.cpp IGraphics/IControl.h
-	IGraphics/IControls.cpp IGraphics/IControls.h
-)
+set(IPLUG_INCLUDE_DIRECTORIES_COMMON . IGraphics IGraphics/NanoSVG)
+
+set(IPLUG_LINK_LIBRARIES_COMMON lice WDL)
+
 if(WIN32)
-	target_link_libraries(IPlug PRIVATE wininet comctl32)
-	list(APPEND IPLUG_API_COMMON IGraphics/IGraphicsWin.cpp IGraphics/IGraphicsWin.h)
+	list(APPEND IPLUG_LINK_LIBRARIES_COMMON wininet comctl32)
+	list(APPEND IPLUG_SOURCES_COMMON IGraphics/IGraphicsWin.cpp IGraphics/IGraphicsWin.h)
 endif()
 
 include(CMakeDependentOption)
@@ -70,14 +67,15 @@ cmake_dependent_option(IPLUG_VST3 "Enable building VST3 plugins" ON "VST3_AVAILA
 
 if(IPLUG_VST)
 	add_library(
-		IPlugVST
+		IPlug-vst
 		STATIC
 		IPlugVST.cpp IPlugVST.h
-		${IPLUG_API_COMMON}
+		${IPLUG_SOURCES_COMMON}
 	)
-	target_link_libraries(IPlugVST PUBLIC IPlug)
-	target_compile_definitions(IPlugVST PUBLIC VST_API)
-	target_include_directories(IPlugVST PUBLIC ../VST_SDK)
+	target_link_libraries(IPlug-vst PUBLIC ${IPLUG_LINK_LIBRARIES_COMMON})
+	target_compile_definitions(IPlug-vst PUBLIC VST_API)
+	target_include_directories(IPlug-vst PUBLIC ../VST_SDK ${IPLUG_INCLUDE_DIRECTORIES_COMMON})
+	set_target_properties(IPlug-vst PROPERTIES FOLDER IPlug)
 endif()
 
 if(IPLUG_VST3)
@@ -85,21 +83,25 @@ if(IPLUG_VST3)
 	get_filename_component(SDK_ROOT ../VST3_SDK ABSOLUTE)
 	add_subdirectory(${SDK_ROOT}/base VST3_SDK/base)
 	target_include_directories(base PUBLIC ${SDK_ROOT})
+	set_target_properties(base PROPERTIES FOLDER "VST3 SDK")
 	add_subdirectory(${SDK_ROOT}/public.sdk VST3_SDK/public.sdk)
 	target_include_directories(sdk PUBLIC ${SDK_ROOT})
+	set_target_properties(sdk PROPERTIES FOLDER "VST3 SDK")
 
 	add_library(
-		IPlugVST3
+		IPlug-vst3
 		STATIC
 		IPlugVST3.cpp IPlugVST3.h
 		${SDK_ROOT}/public.sdk/source/main/dllmain.cpp
 		${SDK_ROOT}/public.sdk/source/vst/vstsinglecomponenteffect.cpp
-		${IPLUG_API_COMMON}
+		${IPLUG_SOURCES_COMMON}
 	)
-	target_link_libraries(IPlugVST3 PUBLIC IPlug sdk)
-	target_compile_definitions(IPlugVST3 PUBLIC VST3_API)
+	target_link_libraries(IPlug-vst3 PUBLIC sdk ${IPLUG_LINK_LIBRARIES_COMMON})
+	target_compile_definitions(IPlug-vst3 PUBLIC VST3_API)
+	target_include_directories(IPlug-vst3 PUBLIC ${IPLUG_INCLUDE_DIRECTORIES_COMMON})
+	set_target_properties(IPlug-vst3 PROPERTIES FOLDER IPlug)
 	if(MSVC)
-		target_sources(IPlugVST3 INTERFACE ${SDK_ROOT}/public.sdk/source/main/winexport.def)
+		target_sources(IPlug-vst3 INTERFACE ${SDK_ROOT}/public.sdk/source/main/winexport.def)
 	endif()
 endif()
 
@@ -109,18 +111,18 @@ function(iplug_add_plugin PLUGIN_NAME)
 	foreach(ARG ${PLUGIN_UNPARSED_ARGUMENTS})
 		message(FATAL_ERROR "Unkown argument \"${ARG}\" passed to iplug_add_plugin")
 	endforeach()
-	if(TARGET IPlugVST)
+	if(TARGET IPlug-vst)
 		add_library(${PLUGIN_NAME}-vst MODULE ${PLUGIN_SOURCES})
-		target_link_libraries(${PLUGIN_NAME}-vst PRIVATE IPlugVST ${PLUGIN_LIBRARIES})
+		target_link_libraries(${PLUGIN_NAME}-vst PRIVATE IPlug-vst ${PLUGIN_LIBRARIES})
 		set_target_properties(${PLUGIN_NAME}-vst PROPERTIES
 			LIBRARY_OUTPUT_NAME ${PLUGIN_NAME}
 			PDB_NAME ${PLUGIN_NAME}-vst
 		)
 		install(TARGETS ${PLUGIN_NAME}-vst DESTINATION .)
 	endif()
-	if(TARGET IPlugVST3)
+	if(TARGET IPlug-vst3)
 		add_library(${PLUGIN_NAME}-vst3 MODULE ${PLUGIN_SOURCES})
-		target_link_libraries(${PLUGIN_NAME}-vst3 PRIVATE IPlugVST3 ${PLUGIN_LIBRARIES})
+		target_link_libraries(${PLUGIN_NAME}-vst3 PRIVATE IPlug-vst3 ${PLUGIN_LIBRARIES})
 		set_target_properties(${PLUGIN_NAME}-vst3 PROPERTIES
 			LIBRARY_OUTPUT_NAME ${PLUGIN_NAME}
 			PDB_NAME ${PLUGIN_NAME}-vst3

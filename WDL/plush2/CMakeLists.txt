@@ -15,3 +15,4 @@ add_library(
 )
 target_include_directories(plush2 INTERFACE .)
 target_link_libraries(plush2 PUBLIC lice)
+set_target_properties(plush2 PROPERTIES FOLDER Cockos)

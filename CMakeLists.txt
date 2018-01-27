@@ -3,6 +3,12 @@ set(CMAKE_BUILD_TYPE_INIT Debug)
 set(CMAKE_USER_MAKE_RULES_OVERRIDE IPlugDefaultFlags.cmake)
 project(WDL-OL)
 
+if(DEFINED CMAKE_BUILD_TYPE)
+	set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS Debug Release MinSizeRel RelWithDebInfo)
+endif()
+
+set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+
 if(MSVC)
 	add_definitions(
 		-D_CRT_SECURE_NO_WARNINGS
@@ -14,10 +20,6 @@ if(WIN32)
 endif()
 
 add_definitions(-DNO_FREETYPE)
-
-if(DEFINED CMAKE_BUILD_TYPE)
-	set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS Debug Release MinSizeRel RelWithDebInfo)
-endif()
 
 add_subdirectory(WDL)
 add_subdirectory(IPlug)

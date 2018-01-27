@@ -57,3 +57,4 @@ add_library(
 	jversion.h
 )
 target_include_directories(jpeglib INTERFACE .)
+set_target_properties(jpeglib PROPERTIES FOLDER "Third Party")

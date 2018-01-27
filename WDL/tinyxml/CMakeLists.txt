@@ -9,3 +9,4 @@ add_library(
 	tinyxmlparser.cpp
 )
 target_include_directories(tinyxml INTERFACE .)
+set_target_properties(tinyxml PROPERTIES FOLDER "Third Party")

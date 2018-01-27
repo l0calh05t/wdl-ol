@@ -9,3 +9,4 @@ add_library(
 )
 target_include_directories(glew INTERFACE include)
 target_compile_definitions(glew PUBLIC GLEW_STATIC)
+set_target_properties(glew PROPERTIES FOLDER "Third Party")
