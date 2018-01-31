@@ -148,13 +148,14 @@ endif()
 
 include(CMakeParseArguments)
 function(iplug_add_plugin PLUGIN_NAME)
-	cmake_parse_arguments(PLUGIN "" "" "SOURCES;LIBRARIES" ${ARGN})
+	cmake_parse_arguments(PLUGIN "" "" "SOURCES;LIBRARIES;DEFINITIONS;AAX_DEFINITIONS;ASIO_DEFINITIONS;CA_DEFINITIONS;PT9_DEFINITIONS;VST_DEFINITIONS;VST3_DEFINITIONS" ${ARGN})
 	foreach(ARG ${PLUGIN_UNPARSED_ARGUMENTS})
 		message(FATAL_ERROR "Unkown argument \"${ARG}\" passed to iplug_add_plugin")
 	endforeach()
 	if(TARGET IPlug-vst)
 		add_library(${PLUGIN_NAME}-vst MODULE ${PLUGIN_SOURCES})
 		target_link_libraries(${PLUGIN_NAME}-vst PRIVATE IPlug-vst ${PLUGIN_LIBRARIES})
+		target_compile_definitions(${PLUGIN_NAME}-vst PRIVATE ${PLUGIN_DEFINITIONS} ${PLUGIN_VST_DEFINITIONS})
 		set_target_properties(${PLUGIN_NAME}-vst PROPERTIES
 			LIBRARY_OUTPUT_NAME ${PLUGIN_NAME}
 			PDB_NAME ${PLUGIN_NAME}-vst
@@ -164,6 +165,7 @@ function(iplug_add_plugin PLUGIN_NAME)
 	if(TARGET IPlug-vst3)
 		add_library(${PLUGIN_NAME}-vst3 MODULE ${PLUGIN_SOURCES})
 		target_link_libraries(${PLUGIN_NAME}-vst3 PRIVATE IPlug-vst3 ${PLUGIN_LIBRARIES})
+		target_compile_definitions(${PLUGIN_NAME}-vst3 PRIVATE ${PLUGIN_DEFINITIONS} ${PLUGIN_VST3_DEFINITIONS})
 		set_target_properties(${PLUGIN_NAME}-vst3 PROPERTIES
 			LIBRARY_OUTPUT_NAME ${PLUGIN_NAME}
 			PDB_NAME ${PLUGIN_NAME}-vst3
@@ -179,6 +181,7 @@ function(iplug_add_plugin PLUGIN_NAME)
 	# 		app_wrapper/app_main.cpp app_wrapper/app_main.h
 	# 	)
 	# 	target_link_libraries(${PLUGIN_NAME}-app PRIVATE IPlug-app ${PLUGIN_LIBRARIES})
+	#	target_compile_definitions(${PLUGIN_NAME}-app PRIVATE ${PLUGIN_DEFINITIONS} ${PLUGIN_APP_DEFINITIONS})
 	# 	set_target_properties(${PLUGIN_NAME}-app PROPERTIES
 	# 		OUTPUT_NAME ${PLUGIN_NAME}
 	# 		PDB_NAME ${PLUGIN_NAME}-app
