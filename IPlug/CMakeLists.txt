@@ -78,11 +78,21 @@ if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/../VST3_SDK/pluginterfaces/vst/vsttypes.h)
 endif()
 cmake_dependent_option(IPLUG_VST3 "Enable building VST3 plugins" ON "VST3_AVAILABLE" OFF)
 
+if(NOT (AAX_AVAILABLE OR ASIO_AVAILABLE OR CA_AVAILABLE OR PT9_AVAILABLE OR VST_AVAILABLE OR VST3_AVAILABLE))
+	message(FATAL_ERROR "No valid audio SDKs found! Plaease make sure to install at least one SDK")
+endif()
+
+if(NOT (IPLUG_AAX OR IPLUG_ASIO OR IPLUG_CA OR IPLUG_PT9 OR IPLUG_VST OR IPLUG_VST3))
+	message(FATAL_ERROR "No audio SDKs selected for build!")
+endif()
+
 if(IPLUG_VST)
 	add_library(
 		IPlug-vst
 		STATIC
 		IPlugVST.cpp IPlugVST.h
+		../VST_SDK/aeffect.h
+		../VST_SDK/aeffectx.h
 		${IPLUG_SOURCES_COMMON}
 	)
 	target_link_libraries(IPlug-vst PUBLIC ${IPLUG_LINK_LIBRARIES_COMMON})
@@ -118,6 +128,24 @@ if(IPLUG_VST3)
 	endif()
 endif()
 
+# if(IPLUG_ASIO)
+# 	add_library(
+# 		IPlug-app
+# 		STATIC
+# 		IPlugAPP.cpp IPlugAPP.h
+# 		rtaudiomidi/RtAudio.cpp rtaudiomidi/RtAudio.h
+# 		rtaudiomidi/RtMidi.cpp rtaudiomidi/RtMidi.h
+# 		../ASIO_SDK/asio.cpp ../ASIO_SDK/asio.h
+# 		../ASIO_SDK/asiodrivers.cpp ../ASIO_SDK/asiodrivers.h
+# 		../ASIO_SDK/asiolist.cpp ../ASIO_SDK/asiolist.h
+# 		${IPLUG_SOURCES_COMMON}
+# 	)
+# 	target_link_libraries(IPlug-app PUBLIC sdk ${IPLUG_LINK_LIBRARIES_COMMON})
+# 	target_compile_definitions(IPlug-app PUBLIC APP_API)
+# 	target_include_directories(IPlug-app PUBLIC rtaudiomidi ../ASIO_SDK ${IPLUG_INCLUDE_DIRECTORIES_COMMON})
+# 	set_target_properties(IPlug-app PROPERTIES FOLDER IPlug)
+# endif()
+
 include(CMakeParseArguments)
 function(iplug_add_plugin PLUGIN_NAME)
 	cmake_parse_arguments(PLUGIN "" "" "SOURCES;LIBRARIES" ${ARGN})
@@ -143,4 +171,19 @@ function(iplug_add_plugin PLUGIN_NAME)
 		)
 		install(TARGETS ${PLUGIN_NAME}-vst3 DESTINATION .)
 	endif()
+	# if(TARGET IPlug-app)
+	# 	add_executable(
+	# 		${PLUGIN_NAME}-app
+	# 		${PLUGIN_SOURCES}
+	# 		app_wrapper/app_dialog.cpp
+	# 		app_wrapper/app_main.cpp app_wrapper/app_main.h
+	# 	)
+	# 	target_link_libraries(${PLUGIN_NAME}-app PRIVATE IPlug-app ${PLUGIN_LIBRARIES})
+	# 	set_target_properties(${PLUGIN_NAME}-app PROPERTIES
+	# 		OUTPUT_NAME ${PLUGIN_NAME}
+	# 		PDB_NAME ${PLUGIN_NAME}-app
+	# 		WIN32_EXECUTABLE ON
+	# 	)
+	# 	install(TARGETS ${PLUGIN_NAME}-vst3 DESTINATION .)
+	# endif()
 endfunction()
