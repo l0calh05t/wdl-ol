@@ -6,6 +6,9 @@ add_subdirectory(lice)
 add_subdirectory(plush2)
 add_subdirectory(tinyxml)
 add_subdirectory(zlib)
+if(APPLE)
+	add_subdirectory(swell)
+endif()
 
 add_library(
 	WDL

@@ -9,8 +9,8 @@ add_library(
 	lice_extended.h
 	lice_gif_write.cpp
 	lice_gif.cpp
-	lice_gl_ctx.cpp lice_gl_ctx.h
-	lice_glbitmap.cpp lice_glbitmap.h
+    # lice_gl_ctx.cpp lice_gl_ctx.h
+    # lice_glbitmap.cpp lice_glbitmap.h
 	lice_ico.cpp
 	lice_image.cpp
 	lice_jpg_write.cpp

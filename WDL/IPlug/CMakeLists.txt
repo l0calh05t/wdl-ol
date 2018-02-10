@@ -29,6 +29,13 @@ set(
 if(WIN32)
 	target_link_libraries(IPlug PRIVATE wininet comctl32)
 	list(APPEND IPLUG_API_COMMON IGraphicsWin.cpp IGraphicsWin.h)
+elseif(APPLE)
+	find_library(CORE_GRAPHICS_LIBRARY CoreGraphics)
+	find_library(CORE_FOUNDATION_LIBRARY CoreFoundation)
+	find_library(APP_KIT_LIBRARY AppKit)
+	find_library(CARBON_LIBRARY Carbon)
+	target_link_libraries(IPlug PRIVATE ${CORE_GRAPHICS_LIBRARY} ${CORE_FOUNDATION_LIBRARY} ${APP_KIT_LIBRARY} ${CARBON_LIBRARY} swell)
+	list(APPEND IPLUG_API_COMMON IGraphicsMac.mm IGraphicsMac.h IGraphicsCocoa.mm IGraphicsCocoa.h)
 endif()
 
 include(CMakeDependentOption)
@@ -108,6 +115,8 @@ if(IPLUG_VST3)
 	endif()
 endif()
 
+set(SWELL_RESGEN ${CMAKE_CURRENT_LIST_DIR}/../swell/mac_resgen.php CACHE INTERNAL "")
+
 include(CMakeParseArguments)
 function(iplug_add_plugin PLUGIN_NAME)
 	cmake_parse_arguments(PLUGIN "" "" "SOURCES;LIBRARIES" ${ARGN})
@@ -116,23 +125,58 @@ function(iplug_add_plugin PLUGIN_NAME)
 	endforeach()
 	if(TARGET IPlugVST)
 		add_library(${PLUGIN_NAME}-vst MODULE ${PLUGIN_SOURCES})
+        target_include_directories(${PLUGIN_NAME}-vst PRIVATE .)
 		target_link_libraries(${PLUGIN_NAME}-vst PRIVATE IPlugVST ${PLUGIN_LIBRARIES})
 		set_target_properties(${PLUGIN_NAME}-vst PROPERTIES
 			OUTPUT_NAME ${PLUGIN_NAME}
 			LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/VST2
 			ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/VST2
+			PREFIX ""
 		)
+		# this changes the extension of the .so to .vst... but maybe we should have a bundle/framework ending in .vst not a .so
+		# if(APPLE)
+		# 	set_target_properties(${PLUGIN_NAME}-vst PROPERTIES	SUFFIX ".vst")
+		# endif()
 		install(TARGETS ${PLUGIN_NAME}-vst DESTINATION .)
 	endif()
 	if(TARGET IPlugVST3)
 		add_library(${PLUGIN_NAME}-vst3 MODULE ${PLUGIN_SOURCES})
+        target_include_directories(${PLUGIN_NAME}-vst3 PRIVATE .)
 		target_link_libraries(${PLUGIN_NAME}-vst3 PRIVATE IPlugVST3 ${PLUGIN_LIBRARIES})
 		set_target_properties(${PLUGIN_NAME}-vst3 PROPERTIES
 			OUTPUT_NAME ${PLUGIN_NAME}
 			LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/VST3
 			ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/VST3
+			PREFIX ""
 			SUFFIX .vst3
 		)
 		install(TARGETS ${PLUGIN_NAME}-vst3 DESTINATION .)
 	endif()
+	# this doesn't do what I expected
+    # if(APPLE)
+	# 	foreach(_TARGET ${PLUGIN_NAME}-vst ${PLUGIN_NAME}-vst3)
+	# 		if(NOT TARGET ${_TARGET})
+	# 			continue()
+	# 		endif()
+	# 		get_target_property(_SOURCES ${_TARGET} SOURCES)
+	# 		foreach(_SRC ${_SOURCES})
+	# 			if(NOT _SRC MATCHES "\.rc$")
+	# 				continue()
+	# 			endif()
+	# 			get_filename_component(_BASE ${_SRC} NAME_WE)
+	# 			get_filename_component(_ABS ${_SRC} ABSOLUTE)
+	# 			get_filename_component(_DIR ${_ABS} DIRECTORY)
+	# 			find_program(PHP_COMMAND php)
+	# 			message("${PHP_COMMAND} ${SWELL_RESGEN} --force ${_SRC}")
+	# 			message("${CMAKE_CURRENT_SOURCE_DIR}")
+	# 			add_custom_command(
+	# 				OUTPUT ${_DIR}/${_BASE}.rc_mac_dlg ${_DIR}/${_BASE}.rc_mac_menu
+	# 				DEPENDS ${_SRC}
+	# 				COMMAND ${PHP_COMMAND} ARGS ${SWELL_RESGEN} --force ${_SRC}
+	# 				WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+	# 			)
+	# 			target_sources(${_TARGET} PRIVATE ${_DIR}/${_BASE}.rc_mac_dlg ${_DIR}/${_BASE}.rc_mac_menu)
+	# 		endforeach()
+	# 	endforeach()
+    # endif()
 endfunction()
