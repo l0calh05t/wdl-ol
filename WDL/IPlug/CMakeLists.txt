@@ -104,7 +104,6 @@ if(IPLUG_VST3)
 		IPlugVST3
 		STATIC
 		IPlugVST3.cpp IPlugVST3.h
-		../../VST3_SDK/public.sdk/source/main/dllmain.cpp
 		../../VST3_SDK/public.sdk/source/vst/vstsinglecomponenteffect.cpp
 		${IPLUG_API_COMMON}
 	)
@@ -112,6 +111,13 @@ if(IPLUG_VST3)
 	target_compile_definitions(IPlugVST3 INTERFACE VST3_API VST3_PRESET_LIST)
 	if(MSVC)
 		target_sources(IPlugVST3 INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/IPlugVST3.def)
+	endif()
+	if(WIN32)
+		target_sources(IPlugVST3 PRIVATE ../../VST3_SDK/public.sdk/source/main/dllmain.cpp)
+	elseif(APPLE)
+		target_sources(IPlugVST3 PRIVATE ../../VST3_SDK/public.sdk/source/main/macmain.cpp)
+		target_compile_definitions(base PUBLIC $<$<CONFIG:Debug>:DEVELOPMENT>)
+		target_compile_definitions(sdk PUBLIC $<$<CONFIG:Debug>:DEVELOPMENT>)
 	endif()
 endif()
 
@@ -131,12 +137,13 @@ function(iplug_add_plugin PLUGIN_NAME)
 			OUTPUT_NAME ${PLUGIN_NAME}
 			LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/VST2
 			ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/VST2
-			PREFIX ""
 		)
-		# this changes the extension of the .so to .vst... but maybe we should have a bundle/framework ending in .vst not a .so
-		# if(APPLE)
-		# 	set_target_properties(${PLUGIN_NAME}-vst PROPERTIES	SUFFIX ".vst")
-		# endif()
+		if(APPLE)
+			set_target_properties(${PLUGIN_NAME}-vst PROPERTIES
+				BUNDLE ON
+				BUNDLE_EXTENSION vst
+			)
+		endif()
 		install(TARGETS ${PLUGIN_NAME}-vst DESTINATION .)
 	endif()
 	if(TARGET IPlugVST3)
@@ -147,9 +154,15 @@ function(iplug_add_plugin PLUGIN_NAME)
 			OUTPUT_NAME ${PLUGIN_NAME}
 			LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/VST3
 			ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/VST3
-			PREFIX ""
-			SUFFIX .vst3
 		)
+		if(APPLE)
+			set_target_properties(${PLUGIN_NAME}-vst3 PROPERTIES
+				BUNDLE ON
+				BUNDLE_EXTENSION vst3
+			)
+		else()
+			set_target_properties(${PLUGIN_NAME}-vst3 PROPERTIES PREFIX "" SUFFIX .vst3)
+		endif()
 		install(TARGETS ${PLUGIN_NAME}-vst3 DESTINATION .)
 	endif()
 	# this doesn't do what I expected
